@@ -9,7 +9,9 @@ class Concurrent::Queue {
     # value to dequeue, if any.
     my class Node {
         has $.value;
-        has Node $.next is rw;
+        # Must not rely on auto-initialization of attributes when using CAS,
+        # as it will be racey.
+        has Node $.next is rw = Node;
     }
     has Node $.head;
     has Node $.tail;
