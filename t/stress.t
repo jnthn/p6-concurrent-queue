@@ -8,7 +8,7 @@ use Test;
 # counters per ID. At the end we add up the values we saw to make sure that
 # none got lost.
 
-my constant THREADS = 2;
+my constant THREADS = 4;
 
 my $cq = Concurrent::Queue.new;
 my @worker-results = await do for 1..THREADS -> $id {
