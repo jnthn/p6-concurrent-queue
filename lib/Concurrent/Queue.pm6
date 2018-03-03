@@ -15,6 +15,7 @@ class Concurrent::Queue {
     }
     has Node $.head;
     has Node $.tail;
+    has atomicint $!elems;
 
     submethod BUILD(--> Nil) {
         # Head and tail initially point to a dummy node.
@@ -45,6 +46,7 @@ class Concurrent::Queue {
         # it in order that it could make progress. Thus a failure to swap here
         # is fine.
         cas($!tail, $tail, $node);
+        $!elems⚛++;
     }
 
     method dequeue() {
@@ -73,10 +75,19 @@ class Concurrent::Queue {
                         # Successfully dequeued. The head node is always a
                         # dummy. The value is in the next node. That node
                         # becomes the new dummy.
+                        $!elems⚛--;
                         return $next.value;
                     }
                 }
             }
         }
+    }
+
+    multi method elems(Concurrent::Queue:D: -->  Int) {
+        $!elems
+    }
+
+    multi method Bool(Concurrent::Queue:D: --> Bool) {
+        $!elems != 0
     }
 }
