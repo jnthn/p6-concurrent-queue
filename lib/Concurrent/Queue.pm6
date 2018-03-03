@@ -36,7 +36,7 @@ class Concurrent::Queue {
                     cas($!tail, $tail, $next);
                 }
                 else {
-                    last if cas($!tail.next, $next, $node) === $next;
+                    last if cas($tail.next, $next, $node) === $next;
                 }
             }
         }
