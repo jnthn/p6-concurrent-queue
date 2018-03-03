@@ -28,7 +28,7 @@ class Concurrent::Queue {
             $tail = $!tail;
             my $next = $tail.next;
             if $tail === $!tail {
-                with $next {
+                if $next.DEFINITE {
                     # Something else inserted to the queue, but $!tail was not
                     # yet updated. Help by updating it (and don't check the
                     # outcome, since if we fail another thread did this work
@@ -55,7 +55,7 @@ class Concurrent::Queue {
             if $head === $!head {
                 if $head === $tail {
                     # Head and tail point to the same place. Two cases:
-                    with $next {
+                    if $next.DEFINITE {
                         # The head node has a next. This means there is an
                         # enqueue in montion that did not manage to update the
                         # $!tail yet. Help it on its way; failure to do so
