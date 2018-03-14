@@ -59,7 +59,7 @@ class Concurrent::Queue {
                     # Head and tail point to the same place. Two cases:
                     if $next.DEFINITE {
                         # The head node has a next. This means there is an
-                        # enqueue in montion that did not manage to update the
+                        # enqueue in motion that did not manage to update the
                         # $!tail yet. Help it on its way; failure to do so
                         # is fine, it just means another thread did it.
                         cas($!tail, $tail, $next);
