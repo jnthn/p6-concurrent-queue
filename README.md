@@ -13,6 +13,8 @@ A lock-free queue data structure, safe for concurrent use.
     say $queue.dequeue;         # who
     say ?$queue;                # True
     say $queue.elems;           # 2
+    say $queue.Seq;             # (what why)
+    say $queue.list;            # (what why)
     say $queue.dequeue;         # what
     $queue.enqueue('when');
     say $queue.dequeue;         # why
@@ -34,7 +36,7 @@ but lock-free data structures tend to scale better.
 
 This lock-free queue data structure implements an [algorithm described by
 Maged M. Michael and Michael L. Scott](https://www.research.ibm.com/people/m/michael/podc-1996.pdf).
-The only differences are:
+The only (intended) differences are:
 
 * A `Failure` is returned to indicate emptiness, rather than a combination of
   boolean return value and out parameter, in order that this type feels more
@@ -83,3 +85,27 @@ interacting with the queue at the point this method is called. Never use
 the result of `Bool` to decide whether to `dequeue`, since another thread
 may `enqueue` or `dequeue` in the meantime. Instead, check if `dequeue`
 returns a `Failure`.
+
+#### Seq
+
+Returns a `Seq` that will iterate the queue contents. The iteration will
+include all values that had not been dequeued at the point the `Seq`
+method was called. Additionally, it will incorporate any values that
+are enqueued during the iteration, meaning that if values are being
+enqueued at a rate at least as fast as the iteration is visiting them
+then the iteration may not terminate.
+
+If wanting to prevent this, consider limiting the result length to
+that of the result of `elems` (e.g. `$cq.head($cq.elems)`). If
+using the queue to collect values in many threads and then iterate
+them in one thread afterwards, this is not a concern, since nothing
+will be enqueueing further values at that point. However, consider
+using `Concurrent::Stack` instead, since a concurrent stack's
+operations are cheaper than those of a concurrent queue (the same
+algorithmic order, but a lower constant factor).
+
+#### list
+
+Equivalent to `.Seq.list`; see the description of `Seq` for caveats,
+and remember that a `List` preserves its elements, so the potentially
+endless iteration could also eat endless memory.

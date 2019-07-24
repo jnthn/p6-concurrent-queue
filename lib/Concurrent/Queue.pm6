@@ -90,4 +90,16 @@ class Concurrent::Queue {
     multi method Bool(Concurrent::Queue:D: --> Bool) {
         $!elems != 0
     }
+
+    multi method Seq(Concurrent::Queue:D: --> Seq) {
+        my Node $current = $!head.next;
+        gather while $current.DEFINITE {
+            take $current.value;
+            $current = $current.next;
+        }
+    }
+
+    multi method list(Concurrent::Queue:D: --> List) {
+        self.Seq.list
+    }
 }
