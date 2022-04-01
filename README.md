@@ -35,7 +35,7 @@ threads cheap - synchronization at the CPU level is still synchronization -
 but lock-free data structures tend to scale better.
 
 This lock-free queue data structure implements an [algorithm described by
-Maged M. Michael and Michael L. Scott](https://www.research.ibm.com/people/m/michael/podc-1996.pdf).
+Maged M. Michael and Michael L. Scott](https://www.cs.rochester.edu/u/scott/papers/1996_PODC_queues.pdf).
 The only (intended) differences are:
 
 * A `Failure` is returned to indicate emptiness, rather than a combination of
